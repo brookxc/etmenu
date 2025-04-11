@@ -85,7 +85,7 @@ async function getMenuItems(restaurantId: string): Promise<MenuItem[]> {
               name: item.name || "Unnamed Item",
               description: item.description || "",
               price: item.price || 0,
-              image: item.image || "/placeholder.svg",
+              image: item.image || "", // Don't set a default placeholder
               category: category.name || "Uncategorized",
             })
           })
@@ -101,6 +101,7 @@ async function getMenuItems(restaurantId: string): Promise<MenuItem[]> {
       return restaurant.menuItems.map((item: any) => ({
         ...item,
         restaurantId: restaurantId,
+        image: item.image || "", // Don't set a default placeholder
       }))
     }
 
@@ -109,7 +110,14 @@ async function getMenuItems(restaurantId: string): Promise<MenuItem[]> {
     const menuItems = await db.collection("menuItems").find({ restaurantId: restaurantId }).toArray()
 
     console.log(`Found ${menuItems.length} menu items in menuItems collection for restaurant ${restaurantId}`)
-    return JSON.parse(JSON.stringify(menuItems))
+    return JSON.parse(
+      JSON.stringify(
+        menuItems.map((item: any) => ({
+          ...item,
+          image: item.image || "", // Don't set a default placeholder
+        })),
+      ),
+    )
   } catch (error) {
     console.error("Error fetching menu items:", error)
     return []
