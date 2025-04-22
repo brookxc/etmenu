@@ -29,7 +29,7 @@ const CategoryTab = memo(
     <button
       data-category={category}
       onClick={onClick}
-      className={`px-4 py-2 text-sm font-medium transition-all relative whitespace-nowrap ${
+      className={`px-2 py-1 text-xs font-medium transition-all relative whitespace-nowrap ${
         isActive ? "text-white" : "bg-gray-900 text-white hover:bg-gray-800"
       }`}
       style={isActive ? { backgroundColor: themeColor } : {}}
@@ -71,7 +71,7 @@ export default function MenuTabs({
     if (sectionRef) {
       isScrolling.current = true
       // Get the header height to offset the scroll position
-      const headerOffset = 120 // Adjust based on your header height
+      const headerOffset = 100 // Adjust based on your header height
       const sectionPosition = sectionRef.getBoundingClientRect().top
       const offsetPosition = sectionPosition + window.scrollY - headerOffset
 
@@ -92,7 +92,7 @@ export default function MenuTabs({
     const handleScroll = () => {
       if (!contentRef.current || isScrolling.current) return
 
-      const scrollPosition = window.scrollY + 120 // Offset for better UX
+      const scrollPosition = window.scrollY + 100 // Offset for better UX
 
       // Find which section is currently in view
       let currentCategory = categories[0]
@@ -146,15 +146,15 @@ export default function MenuTabs({
   }, [activeCategory, categories])
 
   return (
-    <div className="relative max-w-4xl mx-auto">
+    <div className="relative max-w-3xl mx-auto">
       {/* Category tabs - smaller and scrollable */}
       <div
-        className="sticky top-0 z-10 bg-white/90 backdrop-blur-md py-2 border-b"
+        className="sticky top-0 z-10 bg-white/90 backdrop-blur-md py-1 border-b"
         style={{ borderColor: `${lighterThemeColor}` }}
         role="tablist"
         aria-label="Menu Categories"
       >
-        <div ref={tabsContainerRef} className="flex overflow-x-auto scrollbar-hide gap-1 px-4 max-w-full">
+        <div ref={tabsContainerRef} className="flex overflow-x-auto scrollbar-hide gap-0.5 px-2 max-w-full">
           {categories.map((category) => (
             <CategoryTab
               key={category}
@@ -171,56 +171,56 @@ export default function MenuTabs({
       </div>
 
       {/* Menu content - now showing all categories for scrolling */}
-      <div ref={contentRef} className="bg-white shadow-lg rounded-sm p-6 mt-4">
+      <div ref={contentRef} className="bg-white shadow-sm rounded-sm p-3 mt-2">
         {categories.map((category) => (
           <div
             key={category}
             ref={(el) => {
               sectionRefs.current[category] = el
             }}
-            className="mb-12 last:mb-0"
+            className="mb-6 last:mb-0"
             role="tabpanel"
             id={`category-${category}`}
             aria-labelledby={`tab-${category}`}
           >
             {/* Category header */}
             <h3
-              className="text-xl font-serif text-center uppercase tracking-wider mb-6 pb-2 border-b"
+              className="text-sm font-serif text-center uppercase tracking-wider mb-3 pb-1 border-b"
               style={{ color: themeColor, borderColor: lighterThemeColor }}
             >
               {category}
             </h3>
 
             {/* Menu items */}
-            <div className="space-y-4">
+            <div className="space-y-2">
               {menuItems
                 .filter((item) => item.category === category)
                 .map((item) => (
                   <div
                     key={item._id}
-                    className="flex justify-between items-start pb-3 border-b"
+                    className="flex justify-between items-start pb-2 border-b"
                     style={{ borderColor: `${lighterThemeColor}30` }}
                   >
                     {/* Show image if it exists */}
                     {item.image && (
-                      <div className="relative h-14 w-14 mr-3 rounded-md overflow-hidden flex-shrink-0">
+                      <div className="relative h-10 w-10 mr-2 rounded-md overflow-hidden flex-shrink-0">
                         <Image
                           src={item.image || "/placeholder.svg"}
                           alt={item.name}
                           fill
                           className="object-cover"
-                          sizes="56px"
+                          sizes="40px"
                         />
                       </div>
                     )}
 
                     <div className="flex-1">
-                      <h4 className="text-base font-bold" style={{ color: darkerThemeColor }}>
-                        {item.name}
-                      </h4>
-                      {item.description && <p className="text-xs text-gray-600 mt-0.5">{item.description}</p>}
+                      <h4 className="text-xs font-bold text-black">{item.name}</h4>
+                      {item.description && (
+                        <p className="text-[10px] text-gray-600 mt-0.5 leading-tight">{item.description}</p>
+                      )}
                     </div>
-                    <div className="text-base font-bold ml-3 whitespace-nowrap" style={{ color: themeColor }}>
+                    <div className="text-xs font-bold ml-2 whitespace-nowrap" style={{ color: themeColor }}>
                       {formatPrice(item.price)}
                     </div>
                   </div>

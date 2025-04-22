@@ -8,8 +8,14 @@ import type { Metadata } from "next"
 import { generateLighterColor, generateDarkerColor } from "@/lib/utils"
 import { unstable_noStore } from "next/cache"
 
+// Define the correct props type for the page
+interface PageProps {
+  params: { id: string }
+  searchParams?: { [key: string]: string | string[] | undefined }
+}
+
 // Add dynamic metadata
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const restaurant = await getRestaurant(params.id)
 
   if (!restaurant) {
@@ -124,7 +130,7 @@ async function getMenuItems(restaurantId: string): Promise<MenuItem[]> {
   }
 }
 
-export default async function RestaurantPage({ params }: { params: { id: string } }) {
+export default async function RestaurantPage({ params }: PageProps) {
   const restaurant = await getRestaurant(params.id)
 
   if (!restaurant) {
@@ -145,12 +151,12 @@ export default async function RestaurantPage({ params }: { params: { id: string 
 
   return (
     <div className="min-h-screen bg-gray-100 bg-[url('/menu-background.jpg')] bg-cover bg-fixed bg-center bg-no-repeat">
-      <div className="bg-white/80 backdrop-blur-sm min-h-screen">
-        {/* Restaurant Header */}
-        <div className="container mx-auto py-8 px-4">
-          <div className="flex flex-col items-center justify-center mb-8">
+      <div className="bg-white/20 backdrop-blur-sm min-h-screen">
+        {/* Restaurant Header - Reduced size */}
+        <div className="container mx-auto py-4 px-3">
+          <div className="flex flex-col items-center justify-center mb-4">
             <div
-              className="relative h-24 w-24 sm:h-32 sm:w-32 rounded-full overflow-hidden bg-white flex-shrink-0 shadow-md mb-4 border-4"
+              className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden bg-white flex-shrink-0 shadow-md mb-2 border-2"
               style={{ borderColor: lighterThemeColor }}
             >
               {restaurant.logo ? (
@@ -159,7 +165,7 @@ export default async function RestaurantPage({ params }: { params: { id: string 
                   alt={`${restaurant.name} logo`}
                   fill
                   className="object-cover"
-                  sizes="(max-width: 640px) 96px, 128px"
+                  sizes="(max-width: 640px) 64px, 80px"
                   priority
                 />
               ) : (
@@ -168,19 +174,16 @@ export default async function RestaurantPage({ params }: { params: { id: string 
             </div>
 
             <div className="text-center">
-              <h1 className="text-3xl sm:text-4xl font-serif font-medium tracking-wide" style={{ color: themeColor }}>
+              <h1 className="text-xl sm:text-2xl font-serif font-medium tracking-wide" style={{ color: themeColor }}>
                 {restaurant.name}
               </h1>
-              <p className="mt-1 text-sm text-gray-500">{restaurant.location}</p>
+              <p className="mt-0.5 text-xs text-gray-500">{restaurant.location}</p>
             </div>
           </div>
 
-          {/* Menu Title */}
-          <div className="text-center mb-3">
-            <h2
-              className="text-xl sm:text-5xl font-serif font-normal tracking-wide"
-              style={{ color: darkerThemeColor }}
-            >
+          {/* Menu Title - Reduced size */}
+          <div className="text-center mb-2">
+            <h2 className="text-lg sm:text-xl font-serif font-normal tracking-wide" style={{ color: darkerThemeColor }}>
               Our Menu
             </h2>
           </div>
@@ -195,8 +198,10 @@ export default async function RestaurantPage({ params }: { params: { id: string 
               darkerThemeColor={darkerThemeColor}
             />
           ) : (
-            <div className="text-center py-16 bg-white rounded-lg shadow-sm max-w-md mx-auto">
-              <p style={{ color: themeColor }}>No menu items available for this restaurant.</p>
+            <div className="text-center py-8 bg-white rounded-lg shadow-sm max-w-md mx-auto">
+              <p className="text-sm" style={{ color: themeColor }}>
+                No menu items available for this restaurant.
+              </p>
             </div>
           )}
         </div>
