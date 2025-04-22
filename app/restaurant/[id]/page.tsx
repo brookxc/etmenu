@@ -144,61 +144,62 @@ export default async function RestaurantPage({ params }: { params: { id: string 
   const darkerThemeColor = generateDarkerColor(themeColor)
 
   return (
-    <div className="min-h-screen bg-[#f8f5f2]">
-      {/* Restaurant Header with dynamic theme color */}
-      <div
-        className="text-white"
-        style={{
-          background: `linear-gradient(to right, ${themeColor}, ${darkerThemeColor})`,
-        }}
-      >
-        <div className="container mx-auto py-4 sm:py-12 px-4">
-          <div className="flex flex-row items-start sm:items-center gap-4 sm:gap-6">
-            <div className="relative h-28 w-28 sm:h-40 sm:w-40 md:h-48 md:w-48 rounded-full overflow-hidden bg-white flex-shrink-0 border-4 border-white shadow-lg">
+    <div className="min-h-screen bg-gray-100 bg-[url('/menu-background.jpg')] bg-cover bg-fixed bg-center bg-no-repeat">
+      <div className="bg-white/80 backdrop-blur-sm min-h-screen">
+        {/* Restaurant Header */}
+        <div className="container mx-auto py-8 px-4">
+          <div className="flex flex-col items-center justify-center mb-8">
+            <div
+              className="relative h-24 w-24 sm:h-32 sm:w-32 rounded-full overflow-hidden bg-white flex-shrink-0 shadow-md mb-4 border-4"
+              style={{ borderColor: lighterThemeColor }}
+            >
               {restaurant.logo ? (
                 <Image
                   src={restaurant.logo || "/placeholder.svg"}
                   alt={`${restaurant.name} logo`}
                   fill
                   className="object-cover"
-                  sizes="(max-width: 640px) 112px, (max-width: 768px) 160px, 192px"
+                  sizes="(max-width: 640px) 96px, 128px"
                   priority
                 />
               ) : (
-                <div className="absolute inset-0 bg-white"></div>
+                <div className="absolute inset-0 bg-gray-100"></div>
               )}
             </div>
 
-            <div className="flex-1 min-w-0">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold truncate">{restaurant.name}</h1>
-              <p className="mt-1 sm:mt-2 text-sm sm:text-base text-white/80">{restaurant.location}</p>
-              <p className="mt-2 sm:mt-4 text-sm sm:text-base max-w-2xl text-white/90 line-clamp-3 sm:line-clamp-none">
-                {restaurant.description}
-              </p>
+            <div className="text-center">
+              <h1 className="text-3xl sm:text-4xl font-serif font-medium tracking-wide" style={{ color: themeColor }}>
+                {restaurant.name}
+              </h1>
+              <p className="mt-1 text-sm text-gray-500">{restaurant.location}</p>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Menu Section */}
-      <div className="container mx-auto py-8 sm:py-10 px-4">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center" style={{ color: themeColor }}>
-          Our Menu
-        </h2>
-
-        {menuItems.length > 0 ? (
-          <MenuTabs
-            categories={categories}
-            menuItems={menuItems}
-            themeColor={themeColor}
-            lighterThemeColor={lighterThemeColor}
-            darkerThemeColor={darkerThemeColor}
-          />
-        ) : (
-          <div className="text-center py-16 bg-white rounded-lg shadow-md">
-            <p style={{ color: themeColor }}>No menu items available for this restaurant.</p>
+          {/* Menu Title */}
+          <div className="text-center mb-3">
+            <h2
+              className="text-xl sm:text-5xl font-serif font-normal tracking-wide"
+              style={{ color: darkerThemeColor }}
+            >
+              Our Menu
+            </h2>
           </div>
-        )}
+
+          {/* Menu Content */}
+          {menuItems.length > 0 ? (
+            <MenuTabs
+              categories={categories}
+              menuItems={menuItems}
+              themeColor={themeColor}
+              lighterThemeColor={lighterThemeColor}
+              darkerThemeColor={darkerThemeColor}
+            />
+          ) : (
+            <div className="text-center py-16 bg-white rounded-lg shadow-sm max-w-md mx-auto">
+              <p style={{ color: themeColor }}>No menu items available for this restaurant.</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

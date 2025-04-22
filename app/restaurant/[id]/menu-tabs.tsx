@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect, memo } from "react"
 import type { MenuItem } from "@/lib/models"
-import MenuItemCard from "@/components/menu-item-card"
+import { formatPrice } from "@/lib/utils"
+import Image from "next/image"
 
 interface MenuTabsProps {
   categories: string[]
@@ -19,37 +20,19 @@ const CategoryTab = memo(
     isActive,
     onClick,
     themeColor,
-    lighterThemeColor,
   }: {
     category: string
     isActive: boolean
     onClick: () => void
     themeColor: string
-    lighterThemeColor: string
   }) => (
     <button
       data-category={category}
       onClick={onClick}
-      style={{
-        backgroundColor: isActive ? themeColor : "#f1f1f1",
-        color: isActive ? "white" : "#333",
-        borderColor: themeColor,
-      }}
-      className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-        isActive ? "text-white shadow-md transform scale-105" : "hover:text-white border shadow-inner"
+      className={`px-4 py-2 text-sm font-medium transition-all relative whitespace-nowrap ${
+        isActive ? "text-white" : "bg-gray-900 text-white hover:bg-gray-800"
       }`}
-      onMouseOver={(e) => {
-        if (!isActive) {
-          e.currentTarget.style.backgroundColor = lighterThemeColor
-          e.currentTarget.style.color = "#333"
-        }
-      }}
-      onMouseOut={(e) => {
-        if (!isActive) {
-          e.currentTarget.style.backgroundColor = "#f1f1f1"
-          e.currentTarget.style.color = "#333"
-        }
-      }}
+      style={isActive ? { backgroundColor: themeColor } : {}}
       aria-selected={isActive}
       role="tab"
     >
@@ -88,7 +71,7 @@ export default function MenuTabs({
     if (sectionRef) {
       isScrolling.current = true
       // Get the header height to offset the scroll position
-      const headerOffset = 80 // Adjust based on your header height
+      const headerOffset = 120 // Adjust based on your header height
       const sectionPosition = sectionRef.getBoundingClientRect().top
       const offsetPosition = sectionPosition + window.scrollY - headerOffset
 
@@ -109,7 +92,7 @@ export default function MenuTabs({
     const handleScroll = () => {
       if (!contentRef.current || isScrolling.current) return
 
-      const scrollPosition = window.scrollY + 100 // Offset for better UX
+      const scrollPosition = window.scrollY + 120 // Offset for better UX
 
       // Find which section is currently in view
       let currentCategory = categories[0]
@@ -163,84 +146,85 @@ export default function MenuTabs({
   }, [activeCategory, categories])
 
   return (
-    <div className="relative">
-      {/* Sticky category tabs with theme color */}
+    <div className="relative max-w-4xl mx-auto">
+      {/* Category tabs - smaller and scrollable */}
       <div
-        className="sticky top-0 z-10 pt-2 pb-3 shadow-sm"
-        style={{ backgroundColor: "#f8f5f2" }}
+        className="sticky top-0 z-10 bg-white/90 backdrop-blur-md py-2 border-b"
+        style={{ borderColor: `${lighterThemeColor}` }}
         role="tablist"
         aria-label="Menu Categories"
       >
-        <div ref={tabsContainerRef} className="flex overflow-x-auto scrollbar-hide px-2">
-          <div className="flex space-x-2 mx-auto">
-            {categories.map((category) => (
-              <CategoryTab
-                key={category}
-                category={category}
-                isActive={activeCategory === category}
-                onClick={() => {
-                  setActiveCategory(category)
-                  scrollToCategory(category)
-                }}
-                themeColor={themeColor}
-                lighterThemeColor={lighterThemeColor}
-              />
-            ))}
-          </div>
+        <div ref={tabsContainerRef} className="flex overflow-x-auto scrollbar-hide gap-1 px-4 max-w-full">
+          {categories.map((category) => (
+            <CategoryTab
+              key={category}
+              category={category}
+              isActive={activeCategory === category}
+              onClick={() => {
+                setActiveCategory(category)
+                scrollToCategory(category)
+              }}
+              themeColor={themeColor}
+            />
+          ))}
         </div>
       </div>
 
-      {/* Continuous scrolling menu content */}
-      <div ref={contentRef} className="mt-4">
+      {/* Menu content - now showing all categories for scrolling */}
+      <div ref={contentRef} className="bg-white shadow-lg rounded-sm p-6 mt-4">
         {categories.map((category) => (
           <div
             key={category}
             ref={(el) => {
               sectionRefs.current[category] = el
             }}
-            
-            className="mb-10"
+            className="mb-12 last:mb-0"
             role="tabpanel"
             id={`category-${category}`}
             aria-labelledby={`tab-${category}`}
           >
-            {/* Category header with sticky behavior within its section */}
-            <div
-              className="bg-[#f8f5f2] py-2 mb-4 sticky -top-1 z-[5]"
-              style={{ top: "60px" }} // Position just below the tabs
+            {/* Category header */}
+            <h3
+              className="text-xl font-serif text-center uppercase tracking-wider mb-6 pb-2 border-b"
+              style={{ color: themeColor, borderColor: lighterThemeColor }}
             >
-              <h3
-                className="text-xl font-bold pl-2 pb-2 border-b-2"
-                style={{
-                  color: themeColor,
-                  borderColor: `${themeColor}40`, // 25% opacity border
-                }}
-              >
-                {category}
-              </h3>
-            </div>
+              {category}
+            </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Menu items */}
+            <div className="space-y-4">
               {menuItems
                 .filter((item) => item.category === category)
                 .map((item) => (
-                  <MenuItemCard
+                  <div
                     key={item._id}
-                    item={item}
-                    themeColor={themeColor}
-                    darkerThemeColor={darkerThemeColor}
-                  />
-                ))}
-            </div>
+                    className="flex justify-between items-start pb-3 border-b"
+                    style={{ borderColor: `${lighterThemeColor}30` }}
+                  >
+                    {/* Show image if it exists */}
+                    {item.image && (
+                      <div className="relative h-14 w-14 mr-3 rounded-md overflow-hidden flex-shrink-0">
+                        <Image
+                          src={item.image || "/placeholder.svg"}
+                          alt={item.name}
+                          fill
+                          className="object-cover"
+                          sizes="56px"
+                        />
+                      </div>
+                    )}
 
-            {/* Visual separator between categories */}
-            <div
-              className="h-16 mt-8 mb-2 flex items-center justify-center"
-              style={{
-                background: `linear-gradient(to bottom, transparent, ${lighterThemeColor} 50%, transparent)`,
-              }}
-            >
-              <div className="w-1/3 h-0.5 rounded-full" style={{ backgroundColor: `${themeColor}60` }}></div>
+                    <div className="flex-1">
+                      <h4 className="text-base font-bold" style={{ color: darkerThemeColor }}>
+                        {item.name}
+                      </h4>
+                      {item.description && <p className="text-xs text-gray-600 mt-0.5">{item.description}</p>}
+                    </div>
+                    <div className="text-base font-bold ml-3 whitespace-nowrap" style={{ color: themeColor }}>
+                      {formatPrice(item.price)}
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         ))}
