@@ -120,11 +120,15 @@ export default async function Home() {
               <div className="space-y-4">
                 <div className="flex items-start">
                   <MapPin className="h-5 w-5 mr-3 mt-0.5" aria-hidden="true" />
-                  <p>123 Restaurant Row, Addis Ababa, Ethiopia</p>
+                  <p>Bole, Addis Ababa, Ethiopia</p>
                 </div>
                 <div className="flex items-center">
                   <Phone className="h-5 w-5 mr-3" aria-hidden="true" />
-                  <p>+251 123 456 789</p>
+                  <p>+251 936 965 694</p>
+                </div>
+                <div className="flex items-center">
+                  <Phone className="h-5 w-5 mr-3" aria-hidden="true" />
+                  <p>+251 941 960 621</p>
                 </div>
                 <div className="flex items-center">
                   <Mail className="h-5 w-5 mr-3" aria-hidden="true" />

@@ -151,7 +151,7 @@ export default async function RestaurantPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-gray-100 bg-[url('/menu-background.jpg')] bg-cover bg-fixed bg-center bg-no-repeat">
-      <div className="bg-white/20 backdrop-blur-sm min-h-screen">
+      <div className="bg-white/70 backdrop-blur-sm min-h-screen">
         {/* Restaurant Header - Reduced size */}
         <div className="container mx-auto py-4 px-3">
           <div className="flex flex-col items-center justify-center mb-4">
@@ -174,7 +174,7 @@ export default async function RestaurantPage({ params }: PageProps) {
             </div>
 
             <div className="text-center">
-              <h1 className="text-xl sm:text-2xl font-serif font-medium tracking-wide" style={{ color: themeColor }}>
+              <h1 className="text-xl sm:text-2xl font-serif font-bold tracking-wide" style={{ color: themeColor }}>
                 {restaurant.name}
               </h1>
               <p className="mt-0.5 text-xs text-gray-500">{restaurant.location}</p>
@@ -183,7 +183,7 @@ export default async function RestaurantPage({ params }: PageProps) {
 
           {/* Menu Title - Reduced size */}
           <div className="text-center mb-2">
-            <h2 className="text-lg sm:text-xl font-serif font-normal tracking-wide" style={{ color: darkerThemeColor }}>
+            <h2 className="text-lg sm:text-xl font-sans font-normal tracking-wide" style={{ color: darkerThemeColor }}>
               Our Menu
             </h2>
           </div>
