@@ -6,6 +6,7 @@ import RestaurantCard from "@/components/restaurant-card"
 import type { Metadata } from "next"
 import ContactForm from "@/components/contact-form"
 import { unstable_noStore } from "next/cache"
+import RestaurantBrowser from "@/components/restaurant-browser"
 
 export const metadata: Metadata = {
   title: "ETMenu - Discover Great Restaurants in Ethiopia",
@@ -43,6 +44,7 @@ async function getRestaurants(): Promise<Restaurant[]> {
 export default async function Home() {
   const restaurants = await getRestaurants()
 
+ 
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -51,39 +53,16 @@ export default async function Home() {
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">ETMenu</h1>
             <p className="text-xl mb-8">Discover the finest restaurants and explore their delicious menus</p>
-
-            {/* Search bar */}
-            <div className="max-w-md mx-auto relative">
-              <Input
-                type="search"
-                placeholder="Search restaurants..."
-                className="pl-10 bg-white/90 border-0 h-12 text-base rounded-full shadow-lg"
-                aria-label="Search restaurants"
-              />
-              <Search
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-amber-600 h-5 w-5"
-                aria-hidden="true"
-              />
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Restaurant Listings */}
+      {/* Restaurant Listings with Search */}
       <div className="container mx-auto py-12 px-4">
-        <h2 className="text-2xl md:text-3xl font-bold mb-8 text-amber-900 text-center">Popular Restaurants</h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {restaurants.map((restaurant) => (
-            <RestaurantCard key={restaurant._id} restaurant={restaurant} />
-          ))}
-
-          {restaurants.length === 0 && (
-            <div className="col-span-full text-center py-16 bg-white rounded-xl shadow-lg border border-gray-100">
-              <p className="text-amber-800 mb-4">No restaurants found.</p>
-            </div>
-          )}
-        </div>
+        <h2 className="text-2xl md:text-3xl font-bold mb-4 text-amber-900 text-center">
+          Popular Restaurants
+        </h2>
+        <RestaurantBrowser restaurants={restaurants} />
       </div>
 
       {/* About Us Section */}
