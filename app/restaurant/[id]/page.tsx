@@ -150,7 +150,7 @@ export default async function RestaurantPage({ params }: PageProps) {
   const darkerThemeColor = generateDarkerColor(themeColor)
 
   return (
-    <div className="min-h-screen bg-gray-100 bg-[url('/menu-background.jpg')] bg-cover bg-fixed bg-center bg-no-repeat">
+    <div className="min-h-screen bg-gray-100 bg-cover bg-fixed bg-center bg-no-repeat">
       <div className="bg-white/70 backdrop-blur-sm min-h-screen">
         {/* Restaurant Header - Reduced size */}
         <div className="container mx-auto py-4 px-3">

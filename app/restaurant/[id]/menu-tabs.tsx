@@ -185,7 +185,7 @@ export default function MenuTabs({
           >
             {/* Category header */}
             <h3
-              className="text-sm font-serif text-center uppercase tracking-wider mb-3 pb-1 border-b"
+              className="text-x font-bold text-center uppercase tracking-wider mb-3 pb-1 border-b"
               style={{ color: themeColor, borderColor: lighterThemeColor }}
             >
               {category}
