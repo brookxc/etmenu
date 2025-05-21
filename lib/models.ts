@@ -2,6 +2,7 @@ export interface Restaurant {
   _id: string
   name: string
   logo: string
+  coverPhoto?: string
   location: string
   description: string
   themeColor?: string

@@ -7,6 +7,7 @@ import MenuTabs from "./menu-tabs"
 import type { Metadata } from "next"
 import { generateLighterColor, generateDarkerColor } from "@/lib/utils"
 import { unstable_noStore } from "next/cache"
+import { Suspense } from "react"
 
 // Define the correct props type for the page
 interface PageProps {
@@ -130,6 +131,119 @@ async function getMenuItems(restaurantId: string): Promise<MenuItem[]> {
   }
 }
 
+// Menu content component that uses the restaurant's theme color
+function MenuContent({
+  restaurant,
+  menuItems,
+  categories,
+}: {
+  restaurant: Restaurant
+  menuItems: MenuItem[]
+  categories: string[]
+}) {
+  // Default theme color if not provided
+  const themeColor = restaurant.themeColor || "#D97706" // Default to amber-600 if no theme color
+  const lighterThemeColor = generateLighterColor(themeColor, 0.15)
+  const darkerThemeColor = generateDarkerColor(themeColor)
+
+  return (
+    <>
+      {/* Restaurant Header - Updated with larger logo and text overlay */}
+      <div className="flex flex-col items-center justify-center mb-6">
+        <div
+          className="relative w-full h-40 sm:h-48 md:h-56 rounded-xl overflow-hidden bg-gradient-to-r shadow-lg mb-4"
+          style={{
+            backgroundImage: `linear-gradient(to right, ${themeColor}99, ${lighterThemeColor}99)`,
+            maxWidth: "500px",
+          }}
+        >
+          {restaurant.coverPhoto ? (
+            <>
+              <Image
+                src={restaurant.coverPhoto || "/placeholder.svg"}
+                alt={`${restaurant.name} cover`}
+                fill
+                className="object-cover opacity-90"
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 500px, 500px"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+            </>
+          ) : restaurant.logo ? (
+            <>
+              <Image
+                src={restaurant.logo || "/placeholder.svg"}
+                alt={`${restaurant.name} logo`}
+                fill
+                className="object-cover opacity-90"
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 500px, 500px"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+            </>
+          ) : (
+            <div className="absolute inset-0" style={{ backgroundColor: themeColor }}></div>
+          )}
+
+          {/* Text overlay on the logo */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold tracking-wide drop-shadow-md">
+              {restaurant.name}
+            </h1>
+            <p className="mt-1 text-sm text-white/90 font-medium flex items-center drop-shadow-md">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 mr-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+              {restaurant.location}
+            </p>
+          </div>
+        </div>
+
+        {/* Menu Title */}
+        <div className="text-center mb-4">
+          <h2 className="text-lg sm:text-xl font-serif font-normal tracking-wide" style={{ color: darkerThemeColor }}>
+            Our Menu
+          </h2>
+        </div>
+      </div>
+
+      {/* Menu Content */}
+      {menuItems.length > 0 ? (
+        <MenuTabs
+          categories={categories}
+          menuItems={menuItems}
+          themeColor={themeColor}
+          lighterThemeColor={lighterThemeColor}
+          darkerThemeColor={darkerThemeColor}
+        />
+      ) : (
+        <div className="text-center py-8 bg-white rounded-lg shadow-sm max-w-md mx-auto">
+          <p className="text-sm" style={{ color: themeColor }}>
+            No menu items available for this restaurant.
+          </p>
+        </div>
+      )}
+    </>
+  )
+}
+
 export default async function RestaurantPage({ params }: PageProps) {
   const restaurant = await getRestaurant(params.id)
 
@@ -138,74 +252,20 @@ export default async function RestaurantPage({ params }: PageProps) {
   }
 
   const menuItems = await getMenuItems(params.id)
-
   console.log(`Restaurant: ${restaurant.name}, Menu Items: ${menuItems.length}`)
 
   // Get unique categories
   const categories = Array.from(new Set(menuItems.map((item) => item.category)))
 
-  // Default theme color if not provided
-  const themeColor = restaurant.themeColor || "#D97706" // Default to amber-600 if no theme color
-  const lighterThemeColor = generateLighterColor(themeColor, 0.15)
-  const darkerThemeColor = generateDarkerColor(themeColor)
-
   return (
-    <div className="min-h-screen bg-gray-100 bg-cover bg-fixed bg-center bg-no-repeat">
-      <div className="bg-white/70 backdrop-blur-sm min-h-screen">
-        {/* Restaurant Header - Reduced size */}
-        <div className="container mx-auto py-4 px-3">
-          <div className="flex flex-col items-center justify-center mb-4">
-            <div
-              className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden bg-white flex-shrink-0 shadow-md mb-2 border-2"
-              style={{ borderColor: lighterThemeColor }}
-            >
-              {restaurant.logo ? (
-                <Image
-                  src={restaurant.logo || "/placeholder.svg"}
-                  alt={`${restaurant.name} logo`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 64px, 80px"
-                  priority
-                />
-              ) : (
-                <div className="absolute inset-0 bg-gray-100"></div>
-              )}
-            </div>
-
-            <div className="text-center">
-              <h1 className="text-xl sm:text-2xl font-serif font-bold tracking-wide" style={{ color: themeColor }}>
-                {restaurant.name}
-              </h1>
-              <p className="mt-0.5 text-xs text-gray-500">{restaurant.location}</p>
-            </div>
-          </div>
-
-          {/* Menu Title - Reduced size */}
-          <div className="text-center mb-2">
-            <h2 className="text-lg sm:text-xl font-sans font-normal tracking-wide" style={{ color: darkerThemeColor }}>
-              Our Menu
-            </h2>
-          </div>
-
-          {/* Menu Content */}
-          {menuItems.length > 0 ? (
-            <MenuTabs
-              categories={categories}
-              menuItems={menuItems}
-              themeColor={themeColor}
-              lighterThemeColor={lighterThemeColor}
-              darkerThemeColor={darkerThemeColor}
-            />
-          ) : (
-            <div className="text-center py-8 bg-white rounded-lg shadow-sm max-w-md mx-auto">
-              <p className="text-sm" style={{ color: themeColor }}>
-                No menu items available for this restaurant.
-              </p>
-            </div>
-          )}
-        </div>
+    
+    <div className="bg-white/80 backdrop-blur-sm min-h-screen">
+      <div className="container mx-auto py-4 px-3">
+        
+          <MenuContent restaurant={restaurant} menuItems={menuItems} categories={categories} />
+        
       </div>
     </div>
-  )
+  
+)
 }
